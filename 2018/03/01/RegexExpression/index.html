@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/bitbug_favicon.ico?v=5.1.4">
+
+
+
+
+
+
+  <meta name="keywords" content="java,algorithm," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="此篇文章详述了正则表达式(RegexExpression)的语法，匹配规则，匹配模式等，并介绍了java语言对正则的支持及相关类的方法。 1.简介：正则表达式(regularexpression)是一种字符串的表示形式,可用来对字符串进行约束和限制(如xsd中对字符串类型的限制),也可以从字符串中匹配出符合条件的子串(如Java爬虫从网页响应体中匹配出新的url),还可以进行字符串的替换,分割。">
+<meta name="keywords" content="java,algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java正则表达式详解(1)">
+<meta property="og:url" content="https://opensupporter237.github.io/2018/03/01/RegexExpression/index.html">
+<meta property="og:site_name" content="jack&#39;s Blog">
+<meta property="og:description" content="此篇文章详述了正则表达式(RegexExpression)的语法，匹配规则，匹配模式等，并介绍了java语言对正则的支持及相关类的方法。 1.简介：正则表达式(regularexpression)是一种字符串的表示形式,可用来对字符串进行约束和限制(如xsd中对字符串类型的限制),也可以从字符串中匹配出符合条件的子串(如Java爬虫从网页响应体中匹配出新的url),还可以进行字符串的替换,分割。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-05T01:56:32.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java正则表达式详解(1)">
+<meta name="twitter:description" content="此篇文章详述了正则表达式(RegexExpression)的语法，匹配规则，匹配模式等，并介绍了java语言对正则的支持及相关类的方法。 1.简介：正则表达式(regularexpression)是一种字符串的表示形式,可用来对字符串进行约束和限制(如xsd中对字符串类型的限制),也可以从字符串中匹配出符合条件的子串(如Java爬虫从网页响应体中匹配出新的url),还可以进行字符串的替换,分割。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://opensupporter237.github.io/2018/03/01/RegexExpression/"/>
+
+
+
+
+
+  <title>java正则表达式详解(1) | jack's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">jack's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://opensupporter237.github.io/2018/03/01/RegexExpression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jack_wu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/logo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="jack's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">java正则表达式详解(1)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-01T17:21:07+08:00">
+                2018-03-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>此篇文章详述了正则表达式(RegexExpression)的语法，匹配规则，匹配模式等，并介绍了java语言对正则的支持及相关类的方法。</p>
+<h2 id="1-简介："><a href="#1-简介：" class="headerlink" title="1.简介："></a>1.简介：</h2><p>正则表达式(regularexpression)是一种字符串的表示形式,可用来对字符串进行约束和限制(如xsd中对字符串类型的限制),也可以从字符串中匹配出符合条件的子串(如Java爬虫从网页响应体中匹配出新的url),还可以进行字符串的替换,分割。</p>
+<h2 id="2-元字符"><a href="#2-元字符" class="headerlink" title="2.元字符:"></a>2.元字符:</h2><p>元字符是一些在正则表达式里有着特殊含义的字符。因为元字符在正则表达式里有着特殊的含义，所以这些字符就无法用来代表它们本身。在元字符前面加上一个反斜杠()就可以对它进行转义，这样得到的转义序列将匹配那个字符本身而不是它特殊的元字符含义。元字符可分为以下几类。</p>
+<h3 id="1-匹配空白字符"><a href="#1-匹配空白字符" class="headerlink" title="(1).匹配空白字符:"></a>(1).匹配空白字符:</h3><p>\n 换行  \t  tab键  \r 回车  \f 换页  \b 退格键  \v  垂直制表符</p>
+<h3 id="2-表示字符的集合"><a href="#2-表示字符的集合" class="headerlink" title="(2).表示字符的集合"></a>(2).表示字符的集合</h3><ul>
+<li>\d    任何一个数字，等价于[0-9]或[0123456789]</li>
+<li>\D    任何一个非数字，等价于[^0-9]或[^0123456789]</li>
+<li>\w    任何一个字母（不区分大小写）、数字、下划线，等价于[0-9a-zA-Z_]</li>
+<li>\W    任何一个非字母数字和下划线，等价于[^0-9a-zA-Z_]</li>
+<li>\s    任何一下空白字符，等价于[\f\n\r\t\v] (<em>注意：退格元字符\b不在\s的范围之内</em>)</li>
+<li>\S    任何一下非空白字符，等价于[^\f\n\r\t\v]</li>
+<li>.        任何除\n以外的字符</li>
+<li>十六进制：用前缀\x来给出，如：\x0A对应于ASCII字符10（换行符），其效果等价于\n。</li>
+<li>八进制：用前缀\0来给出，数值本身可以是两位或三位数字，如：\011对应于ASCII字符9（制表符），其效果等价于\t。</li>
+</ul>
+<h3 id="3-限定符"><a href="#3-限定符" class="headerlink" title="(3).限定符"></a>(3).限定符</h3><ul>
+<li>* 匹配前面的子表达式零次或一次或多次</li>
+<li>？ 匹配前面的子表达式零次或一次</li>
+<li>+ 匹配前面的子表达式一次或多次</li>
+<li>{n} 匹配前面的子表达式n次</li>
+<li>{n,m} 匹配前面的子表达式最少n次,最多m次(<em>请注意在逗号和两个数之间不能有空格</em>)</li>
+<li>{n,} 匹配前面的子表达式至少n次</li>
+</ul>
+<h3 id="4-定位符"><a href="#4-定位符" class="headerlink" title="(4).定位符"></a>(4).定位符</h3><ul>
+<li>\^ 匹配输入字符串开始的位置。如果设置多行匹配模式(multiline)，^ 还会与 \n 或 \r 之后的位置匹配。</li>
+<li>$ 匹配输入字符串结尾的位置。如果设置了多行匹配模式(multiline)，，$ 还会与 \n 或 \r 之前的位置匹配</li>
+<li>\b 匹配一个字边界，即字与空格间的位置。(例如 “\babc” 匹配 ”abcde”中的abc)</li>
+<li>\B 匹配一个非字边界(如 “\Bapt”可以匹配 “Chapter” 中的字符串 apt，但不匹配 “aptitude” 中的字符串 apt)(<em>对于 \B 非字边界运算符，位置并不重要（可前可后）</em>)</li>
+</ul>
+<h3 id="5-选择"><a href="#5-选择" class="headerlink" title="(5).选择"></a>(5).选择</h3><ul>
+<li>[]  [abc]可以匹配”apple”中的a或者”boy”中的 b,即可以匹配中括号中的任意单个字符 ；[^abc]则表示可以匹配除abc之外的任意字符。</li>
+<li>(x | y) 可以匹配竖线两边的字符串(x或者y)。</li>
+</ul>
+<h2 id="3-捕获组"><a href="#3-捕获组" class="headerlink" title="3.捕获组"></a>3.捕获组</h2><h3 id="1-简介：-1"><a href="#1-简介：-1" class="headerlink" title="(1).简介："></a>(1).简介：</h3><p>在java中正则表达式中的封闭的小括号被称为捕获组。捕获组在匹配成功时，会将子表达式匹配到的内容，保存到内存中一个以数字编号的组里，且可以被引用。</p>
+<h3 id="2-捕获组的计数"><a href="#2-捕获组的计数" class="headerlink" title="(2).捕获组的计数"></a>(2).捕获组的计数</h3><p>捕获组可以通过从左到右根据其左括号来编号。例如，在正则表达式 ((A)(B(C))) 中，存在四个这样的组：((A)(B(C))), (A)，(B(C))，(C) ，可通过调用函数<code>Matcher.group(int index)</code> 获得子序列，其中index就是捕获组的编号，<code>group(0)</code>始终代表整个正则表达式匹配到的完整内容。此外<code>String.substring(Matcher.start(index),Matcher.end(index))</code>与上面的函数等效。<code>Matcher.groupCount()</code>返回捕获组的数量(不包括完整的匹配，即index=0的情况)</p>
+<h3 id="3-捕获组的命名"><a href="#3-捕获组的命名" class="headerlink" title="(3).捕获组的命名"></a>(3).捕获组的命名</h3><p>Jdk7中新增了对捕获组的命名表示。表示方法：(?<name> pattern)可通过调用<code>matcher.group(string name)</code>获得</name></p>
+<h3 id="4-捕获组的反向引用"><a href="#4-捕获组的反向引用" class="headerlink" title="(4).捕获组的反向引用"></a>(4).捕获组的反向引用</h3><p>反向引用即是在正则表达式内部对前面组捕获到的内容的引用。<br>表示方式：\n (n指代捕获组的编号，n属于(1,9))<br>反向引用的作用通常是用来查找或限定指定标识配对出现。<br>如正则表达式”\b(\d+)\b.*?\b\1\b” 可匹配到字符串” 8 2 9 3 10 3 38 29 2 9”中重复出现的数字。</p>
+<h3 id="5-非捕获元"><a href="#5-非捕获元" class="headerlink" title="(5).非捕获元"></a>(5).非捕获元</h3><p>为避免小括号带来的缓存捕获组匹配到的子字符串的问题，可使用非捕获元，如下：</p>
+<h4 id="pattern"><a href="#pattern" class="headerlink" title="(?: pattern)"></a>(?: pattern)</h4><p>匹配pattern但不获取，不保存匹配结果</p>
+<h4 id="pattern-1"><a href="#pattern-1" class="headerlink" title="(?=pattern)"></a>(?=pattern)</h4><p>非获取匹配，正向肯定预查，在任何匹配pattern的字符串开始处匹配查找字符串，该匹配不需要获取供以后使用。例如，“Windows(?=95|98|NT|2000)”能匹配“Windows2000”中的“Windows”，但不能匹配“Windows3.1”中的“Windows”。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始。</p>
+<h4 id="pattern-2"><a href="#pattern-2" class="headerlink" title="(?!pattern)"></a>(?!pattern)</h4><p>非获取匹配，正向否定预查，在任何不匹配pattern的字符串开始处匹配查找字符串，该匹配不需要获取供以后使用。例如“Windows(?!95|98|NT|2000)”能匹配“Windows3.1”中的“Windows”，但不能匹配“Windows2000”中的“Windows”。</p>
+<h4 id="lt-pattern"><a href="#lt-pattern" class="headerlink" title="(?&lt;=pattern)"></a>(?&lt;=pattern)</h4><p>非获取匹配，反向肯定预查，与正向肯定预查类似，只是方向相反。例如，“(?&lt;=95|98|NT|2000)Windows”能匹配“2000Windows”中的“Windows”，但不能匹配“3.1Windows”中的“Windows”。</p>
+<h4 id="lt-pattern-1"><a href="#lt-pattern-1" class="headerlink" title="(?&lt;!pattern)"></a>(?&lt;!pattern)</h4><p>非获取匹配，反向否定预查，与正向否定预查类似，只是方向相反。例如“(?&lt;!95|98|NT|2000)Windows”能匹配“3.1Windows”中的“Windows”，但不能匹配“2000Windows”中的“Windows”。</p>
+<h4 id="lt-pattern-2"><a href="#lt-pattern-2" class="headerlink" title="(?&lt;=pattern)"></a>(?&lt;=pattern)</h4><p>非获取匹配，反向肯定预查，与正向肯定预查类似，只是方向相反。例如，“(?&lt;=95|98|NT|2000)Windows”能匹配“2000Windows”中的“Windows”，但不能匹配“3.1Windows”中的“Windows”。</p>
+<h4 id="lt-pattern-3"><a href="#lt-pattern-3" class="headerlink" title="(?&lt;!pattern)"></a>(?&lt;!pattern)</h4><p>非获取匹配，反向否定预查，与正向否定预查类似，只是方向相反。例如“(?&lt;!95|98|NT|2000)Windows”能匹配“3.1Windows”中的“Windows”，但不能匹配“2000Windows”中的“Windows”。</p>
+<p>读者若仍有兴趣，可接着阅读<a href="../RegexExpression-2">java正则表达式详解(2)。<br><!-- comment --></a></p>
+<p><div id="container"></div></p>
+<p><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css"></p>
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+  var gitment = new Gitment({
+    id: '2018-03-01 17:21:07', //与头部的date值相同
+    owner: 'openSupporter237', // 可以是你的GitHub用户名，也可以是github id
+    repo: 'opensupporter237.github.io',
+    oauth: {
+      client_id: '383349f63e28c58bbe61',
+      client_secret: '8bb0e71b93f30c28de85fc1d6bf7273df722caec',
+    },
+  })
+  gitment.render('container')
+</script>
+
+
+
+
+
+
+
+
+
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/algorithm/" rel="tag"># algorithm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/01/RegexExpression-2/" rel="prev" title="java正则表达式详解(2)">
+                java正则表达式详解(2) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/logo.jpg"
+                alt="jack_wu" />
+            
+              <p class="site-author-name" itemprop="name">jack_wu</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/openSupporter237" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-简介："><span class="nav-number">1.</span> <span class="nav-text">1.简介：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-元字符"><span class="nav-number">2.</span> <span class="nav-text">2.元字符:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-匹配空白字符"><span class="nav-number">2.1.</span> <span class="nav-text">(1).匹配空白字符:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-表示字符的集合"><span class="nav-number">2.2.</span> <span class="nav-text">(2).表示字符的集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-限定符"><span class="nav-number">2.3.</span> <span class="nav-text">(3).限定符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-定位符"><span class="nav-number">2.4.</span> <span class="nav-text">(4).定位符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-选择"><span class="nav-number">2.5.</span> <span class="nav-text">(5).选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-捕获组"><span class="nav-number">3.</span> <span class="nav-text">3.捕获组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-简介：-1"><span class="nav-number">3.1.</span> <span class="nav-text">(1).简介：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-捕获组的计数"><span class="nav-number">3.2.</span> <span class="nav-text">(2).捕获组的计数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-捕获组的命名"><span class="nav-number">3.3.</span> <span class="nav-text">(3).捕获组的命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-捕获组的反向引用"><span class="nav-number">3.4.</span> <span class="nav-text">(4).捕获组的反向引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-非捕获元"><span class="nav-number">3.5.</span> <span class="nav-text">(5).非捕获元</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pattern"><span class="nav-number">3.5.1.</span> <span class="nav-text">(?: pattern)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pattern-1"><span class="nav-number">3.5.2.</span> <span class="nav-text">(?=pattern)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pattern-2"><span class="nav-number">3.5.3.</span> <span class="nav-text">(?!pattern)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lt-pattern"><span class="nav-number">3.5.4.</span> <span class="nav-text">(?&lt;=pattern)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lt-pattern-1"><span class="nav-number">3.5.5.</span> <span class="nav-text">(?&lt;!pattern)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lt-pattern-2"><span class="nav-number">3.5.6.</span> <span class="nav-text">(?&lt;=pattern)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lt-pattern-3"><span class="nav-number">3.5.7.</span> <span class="nav-text">(?&lt;!pattern)</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jack_wu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+<!-- 背景动画 -->
+<!-- <script type="text/javascript" src="/js/src/particle.js"></script> -->
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
+</html>
